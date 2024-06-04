@@ -29,6 +29,17 @@ app.get('/til', (req,res)=>{
     res.send(filteredData);
 });
 
+app.get('/til/:id', (req,res) => {
+    const id = Number(req.params.id);
+    const target = til.find((target)=> target.id === id);
+    if (target) {
+        res.send(target);
+    } else {
+        res.status(404).send({message : 'No TIL with given ID is found'});
+    }
+})
+
+
 
 
 app.listen(3000,()=>console.log("Server started!"));

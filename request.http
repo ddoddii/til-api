@@ -2,3 +2,6 @@ GET http://localhost:3000/til
 
 ###
 GET http://localhost:3000/til?sort=oldest&category=네트워크&count=2
+
+###
+GET http://localhost:3000/til/2
