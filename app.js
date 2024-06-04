@@ -1,6 +1,6 @@
 import express from "express";
-import til from './data/mock.js';
 import {db} from './db.js';
+import Til from './models/til.js';
 
 const app = express();
 app.use(express.json());
@@ -17,75 +17,99 @@ const connectDatabase = async () => {
 
 connectDatabase();
 
-
-app.get('/til', (req,res)=>{
-    const sort = req.query.sort;
-    const category  = req.query.category;
-    const count = Number(req.query.count);
-
-    // 오래된 순으로 정렬
-    const compareFn = 
-    sort == 'oldest'
-    ? (a,b) => a.createdAt - b.createdAt 
-    : (a,b) => b.createdAt - a.createdAt;
-
-    // 카테고리 필터
-    let filteredData = category ? til.filter(item => item.category === category) : til;
-
-    // 데이터 정렬
-    filteredData = filteredData.sort(compareFn);
-
-    // 정해진 개수만큼 가져오기
-    if(count) {
-        filteredData = filteredData.slice(0,count);
-    }
-    
-    res.send(filteredData);
+/*
+* GET Request 
+*/
+app.get('/til', async (req,res) => {
+    const tils = await Til.findAll();
+    res.send(tils);
 });
 
-app.get('/til/:id', (req,res) => {
+/*
+* GET Request with dynamic url
+*/
+app.get('/til/:id', async (req,res) => {
     const id = Number(req.params.id);
-    const target = til.find((target)=> target.id === id);
-    if (target) {
-        res.send(target);
-    } else {
-        res.status(404).send({message : 'No TIL with given ID is found'});
-    }
-})
+    await Til.findOne({
+        where : {
+            id : id
+        }
+    }).then(til => {
+        if(!til) {
+            res.status(404).json({message : `id ${id} not found`});
+            return;
+        } else {
+            res.send(til);
+        }
+    })
+    
+});
 
-app.post('/til', (req,res) => {
-    const newTIL = req.body;
-    const ids = til.map((target)=>target.id);
-    newTIL.id = Math.max(...ids) +1;
-    newTIL.createdAt = new Date();
-    newTIL.updatedAt = new Date();
-    til.push(newTIL);
-    res.status(201).send(newTIL);
-})
+/*
+* POST Request
+*/
+app.post('/til', async (req,res) => {
+    const newTilRequest = req.body;
+    const newTil = Til.create({
+        title : newTilRequest.title,
+        description : newTilRequest.description,
+        category : newTilRequest.category
+    });
+    res.status(201).send(newTil);
+});
 
-app.patch('/til/:id', (req,res) => {
+/*
+* PATCH Request
+*/
+app.patch('/til/:id', async (req,res) => {
     const id = Number(req.params.id);
-    const target = til.find((target)=> target.id === id);
-    if (target) {
-        Object.keys(req.body).forEach((key) => {
-            target[key] = req.body[key];
-        });
-        target.updatedAt = new Date();
-        res.send(target);
-    } else {
-        res.status(404).send({message : 'No TIL with given ID is found'});
-    }
-})
+    const TilModifyRequest = req.body;
 
-app.delete('/til/:id', (req,res) => {
+    // error handling
+    await Til.findOne({
+        where : {
+            id : id
+        }
+    }).then(async til => {
+        if (!til) {
+            res.status(404).json({message : `id ${id} not found`});
+            return;
+        } else { 
+            await Til.update(
+                TilModifyRequest,
+                {where : {
+                    id : id
+                }}
+            );
+            res.status(200).json({message : `id ${id} modified`} );
+        }
+    });
+});
+
+/*
+* DELETE Request
+*/
+app.delete('/til/:id', async (req,res)=> {
     const id = Number(req.params.id);
-    const idx = til.findIndex((target)=> target.id === id);
-    if (idx >= 0) {
-        til.splice(idx,1);
-        res.sendStatus(204);
-    } else {
-        res.status(404).send({message : 'No TIL with given ID is found'});
-    }
-})
+
+    // error handling
+    await Til.findOne({
+        where : {
+            id : id
+        }
+    }).then(async til => {
+        if (!til) {
+            res.status(404).json({message : `id ${id} not found`});
+            return;
+        } else { 
+            await Til.destroy({
+                where : {
+                    id : id
+                }
+            });
+            res.status(204).json({message : `id ${id} deleted`} );
+        }
+    });
+});
 
 app.listen(3000,()=>console.log("Server started!"));
