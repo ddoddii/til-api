@@ -63,4 +63,15 @@ app.patch('/til/:id', (req,res) => {
     }
 })
 
+app.delete('/til/:id', (req,res) => {
+    const id = Number(req.params.id);
+    const idx = til.findIndex((target)=> target.id === id);
+    if (idx >= 0) {
+        til.splice(idx,1);
+        res.sendStatus(204);
+    } else {
+        res.status(404).send({message : 'No TIL with given ID is found'});
+    }
+})
+
 app.listen(3000,()=>console.log("Server started!"));
