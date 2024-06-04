@@ -1,8 +1,22 @@
 import express from "express";
 import til from './data/mock.js';
+import {db} from './db.js';
 
 const app = express();
 app.use(express.json());
+
+// 데이터베이스 연결
+const connectDatabase = async () => {
+    try {
+        await db.authenticate();
+        console.log('Connection has been established successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+}
+
+connectDatabase();
+
 
 app.get('/til', (req,res)=>{
     const sort = req.query.sort;
