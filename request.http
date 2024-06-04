@@ -15,3 +15,11 @@ Content-Type: application/json
     "description" : "CPU 스케쥴링은 runnable 프로세스 중에서 어떤 프로세스를 다음에 실행시킬지 결정하는 정책이다. 스케쥴링 알고리즘에는 STCF, RR, Priority Scheduling, MLFQ가 있다.",
     "category" : "운영체제"
 }
+
+### 
+PATCH http://localhost:3000/til/2
+Content-Type: application/json
+
+{
+    "description" : "OSI 7 계층의 목적은 표준화를 통하여 장비별로 이질적인 포트, 프로토콜의 호환 문제를 해결하고, OSI 모델을 이용하여 네트워크 시스템에서 일어나는 일을 쉽게 설명할 수 있게 하는 것에 있다. OSI 7계층에는 응용계층, 표현계층, 세션 계층, 전송 계층, 네트워크 계층, 데이터 링크 계층, 물리 계층이 있다."
+}
