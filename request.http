@@ -5,3 +5,13 @@ GET http://localhost:3000/til?sort=oldest&category=네트워크&count=2
 
 ###
 GET http://localhost:3000/til/2
+
+###
+POST http://localhost:3000/til
+Content-Type: application/json
+
+{
+    "title" : "CPU 스케쥴링 알고리즘",
+    "description" : "CPU 스케쥴링은 runnable 프로세스 중에서 어떤 프로세스를 다음에 실행시킬지 결정하는 정책이다. 스케쥴링 알고리즘에는 STCF, RR, Priority Scheduling, MLFQ가 있다.",
+    "category" : "운영체제"
+}

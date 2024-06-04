@@ -2,7 +2,7 @@ import express from "express";
 import til from './data/mock.js';
 
 const app = express();
-
+app.use(express.json());
 
 app.get('/til', (req,res)=>{
     const sort = req.query.sort;
@@ -39,7 +39,15 @@ app.get('/til/:id', (req,res) => {
     }
 })
 
-
+app.post('/til', (req,res) => {
+    const newTIL = req.body;
+    const ids = til.map((target)=>target.id);
+    newTIL.id = Math.max(...ids) +1;
+    newTIL.createdAt = new Date();
+    newTIL.updatedAt = new Date();
+    til.push(newTIL);
+    res.status(201).send(newTIL);
+})
 
 
 app.listen(3000,()=>console.log("Server started!"));
