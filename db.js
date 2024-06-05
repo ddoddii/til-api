@@ -10,9 +10,9 @@ const __dirname = path.dirname(__filename);
 // data 폴더 아래 til.db 저장
 const db_name = path.join(__dirname, "data", "til.db");
 
-const db = new Sequelize({
+const sequelize = new Sequelize({
     dialect : 'sqlite',
     storage : db_name
 });
 
-export {db};
+export const db = sequelize;
