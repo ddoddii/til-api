@@ -45,3 +45,6 @@ Content-Type: application/json
     "description" : "오늘 저녁에는 파스타를 먹었다",
     "category" : "일기"
 }
+
+### 
+GET http://localhost:3000/logger
